@@ -10,19 +10,28 @@ import com.cabrera.manuel.trujillodi.screenb.ScreenBCoordinatorFactory
 import com.cabrera.manuel.trujillodi.screenb.ScreenBData
 import kotlinx.coroutines.CoroutineScope
 
-class StartCoordinator(override val navigation: Navigation, scope: CoroutineScope): Coordinator {
+class StartCoordinator(
+    val navigation: Navigation,
+    scope: CoroutineScope
+) : Coordinator {
 
     private val emitterData: EmitterData = object : EmitterData {
         override fun emitData(event: Any) {
             when (event) {
                 is ScreenAData -> {
+                    println("ScreenAData")
                     val coordinator = screenBCoordinatorFactory.create()
                     navigation.add(coordinator)
+                    coordinator.start()
                 }
+
                 is ScreenBData -> {
+                    println("ScreenBData")
                     val coordinator = screenACoordinatorFactory.create()
                     navigation.add(coordinator)
+                    coordinator.start()
                 }
+
                 else -> {
 
                 }
@@ -30,24 +39,32 @@ class StartCoordinator(override val navigation: Navigation, scope: CoroutineScop
         }
     }
 
+    private val screenACoordinatorFactory by lazy {
+        ScreenACoordinatorFactory(
+            scope = scope,
+            parentCoordinator = this,
+            emitterData = emitterData,
+        )
+    }
 
-    private val screenACoordinatorFactory = ScreenACoordinatorFactory(
-        scope = scope,
-        parentCoordinator = this,
-        emitterData = emitterData,
-        navigation = navigation,
-    )
+    private val screenBCoordinatorFactory  by lazy {
+        ScreenBCoordinatorFactory(
+            scope = scope,
+            parentCoordinator = this,
+            emitterData = emitterData,
+        )
+    }
 
-    private val screenBCoordinatorFactory = ScreenBCoordinatorFactory(
-        scope = scope,
-        parentCoordinator = this,
-        emitterData = emitterData,
-        navigation = navigation,
-    )
-
-    override val parentCoordinator: Coordinator
-        get() = this
+    override val parentCoordinator: Coordinator by lazy {
+        this
+    }
 
     override val screen: Screen
-        get() = screenACoordinatorFactory.create().screen
+        get() = navigation.coordinators.value.last().screen
+
+    override fun start() {
+        println("StartCoordinator start")
+        navigation.replace(screenACoordinatorFactory.create())
+        println("StartCoordinator end")
+    }
 }

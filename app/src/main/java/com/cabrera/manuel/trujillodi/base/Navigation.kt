@@ -1,31 +1,45 @@
 package com.cabrera.manuel.trujillodi.base
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+
 class Navigation {
 
-    internal var coordinators: MutableList<Coordinator> = mutableListOf()
+    private var _coordinators = mutableStateOf(value = listOf<Coordinator>())
+    val coordinators: State<List<Coordinator>> = _coordinators
 
     fun add(coordinator: Coordinator) {
-        coordinators.add(coordinator)
+        println("Navigation add ${coordinator.screen.route}")
+        _coordinators.value = coordinators.value.toMutableList().apply {
+            add(coordinator)
+            coordinator.start()
+        }
+        println("coordinators ${coordinators.value.joinToString("-") { it.screen.route }}")
     }
 
     fun replace(coordinator: Coordinator) {
-        coordinators.removeAt(coordinators.lastIndex)
-        coordinators.add(coordinator)
+        _coordinators.value = coordinators.value.toMutableList().apply {
+            removeAt(coordinators.value.lastIndex)
+            add(coordinator)
+            coordinator.start()
+        }
     }
 
     fun remove(coordinator: Coordinator) {
-        coordinators.remove(coordinator)
+        _coordinators.value = coordinators.value.toMutableList().apply {
+            remove(coordinator)
+        }
     }
 
     fun pop() {
-        coordinators.removeAt(coordinators.lastIndex)
+        _coordinators.value = coordinators.value.toMutableList().apply {
+            removeAt(coordinators.value.lastIndex)
+        }
     }
 
     fun popTo(coordinator: Coordinator) {
-        coordinators = coordinators.subList(0, coordinators.indexOf(coordinator))
-    }
-
-    fun popToRoot() {
-        coordinators = mutableListOf()
+        _coordinators.value = coordinators.value.toMutableList().apply {
+            subList(0, coordinators.value.indexOf(coordinator))
+        }
     }
 }

@@ -10,19 +10,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.cabrera.manuel.trujillodi.base.Navigation
+import com.cabrera.manuel.trujillodi.base.lifecycle.DisposableEffectWithLifeCycle
 import com.cabrera.manuel.trujillodi.ui.theme.TrujilloDiTheme
+import com.cabrera.manuel.trujillodi.util.viewModelFactory
 
 class MainActivity : ComponentActivity() {
+
+    private val navigation: Navigation by lazy {
+        Navigation()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val viewModel by viewModels<MainViewModel>()
+        val factory by lazy {
+            viewModelFactory { MainViewModel(navigation) }
+        }
+        val viewModel: MainViewModel by viewModels { factory }
 
-        val handleOnBackPressed =  object : OnBackPressedCallback(true) {
+        val handleOnBackPressed = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                try {
+                runCatching {
                     viewModel.navigation.pop()
-                } catch (e: Exception) {
+                    println("coordinators ${viewModel.navigation.coordinators.value.joinToString("-") { it.screen.route }}")
+                }.onFailure {
                     finish()
                 }
             }
@@ -32,11 +44,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             TrujilloDiTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    viewModel.currentCoordinator.screen.Create(
+                    navigation.coordinators.value.lastOrNull()?.screen?.Create(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
-                    )
+                    ) ?: finish()
+                }.also {
+                    DisposableEffectWithLifeCycle(viewModel)
                 }
             }
         }

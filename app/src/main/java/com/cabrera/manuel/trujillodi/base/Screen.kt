@@ -6,6 +6,7 @@ import com.cabrera.manuel.trujillodi.base.ui.UiEvents
 import com.cabrera.manuel.trujillodi.base.ui.UiState
 
 interface Screen {
+    val route: String
     val state: UiState
     val events: UiEvents
 

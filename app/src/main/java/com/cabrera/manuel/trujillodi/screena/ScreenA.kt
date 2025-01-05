@@ -1,5 +1,6 @@
 package com.cabrera.manuel.trujillodi.screena
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
@@ -12,12 +13,14 @@ import com.cabrera.manuel.trujillodi.base.Screen
 class ScreenA(
     override val state: ScreenUiStateA,
     override val events: ScreenUiEventsA,
+    override val route: String = "screenA",
 ) : Screen {
 
     @Composable
     override fun Create(modifier: Modifier) {
+
         Column(
-            modifier = modifier,
+            modifier = modifier.background(state.color),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

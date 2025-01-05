@@ -1,4 +1,4 @@
-package com.cabrera.manuel.trujillodi.screenb
+package com.cabrera.manuel.trujillodi.splash
 
 import com.cabrera.manuel.trujillodi.base.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
@@ -8,33 +8,27 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ScreenBCoordinator(
-    scope: CoroutineScope,
+class SplashCoordinator(
+    private val scope: CoroutineScope,
     private val parent: Coordinator,
     private val emitterData: EmitterData,
-) : Coordinator, CustomState<ScreenUiStateB>(ScreenUiStateB()) {
+) : Coordinator, CustomState<SplashState>(SplashState()) {
 
     override val parentCoordinator: Coordinator
         get() = parent
 
     override val screen: Screen
-        get() = ScreenB(
+        get() = Splash(
             state = state.value,
-            events = ScreenUiEventsB(emitterData),
+            events = SplashUiEvents(
+                emitterData = emitterData,
+            ),
         )
 
     override fun start() {
-        println("ScreenBCoordinator start")
-    }
-
-    init {
+        println("ScreenACoordinator start")
         scope.launch {
-            var time = 1
-            while (true) {
-                updateState(state.value.copy(title = "Screen B $time"))
-                delay(1000)
-                time++
-            }
+            delay(3000)
         }
     }
 }

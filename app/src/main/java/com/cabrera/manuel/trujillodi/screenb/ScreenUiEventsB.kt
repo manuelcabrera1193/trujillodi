@@ -8,6 +8,7 @@ class ScreenUiEventsB(
 ) : UiEvents {
 
     fun goToScreenC() {
+        println("goToScreenC")
         emitterData.emitData(ScreenBData("Completed"))
     }
 }

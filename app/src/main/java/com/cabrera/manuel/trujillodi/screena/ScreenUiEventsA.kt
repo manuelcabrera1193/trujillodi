@@ -5,11 +5,10 @@ import com.cabrera.manuel.trujillodi.base.ui.UiEvents
 
 class ScreenUiEventsA(
     private val emitterData: EmitterData,
-    private val showButton: () -> Unit,
-    private val hideButton: () -> Unit,
 ) : UiEvents, EmitterData by emitterData {
 
     fun goToScreenB(title: String, description: String) {
+        println("goToScreenB")
         emitterData.emitData(ScreenAData(title, description))
     }
 

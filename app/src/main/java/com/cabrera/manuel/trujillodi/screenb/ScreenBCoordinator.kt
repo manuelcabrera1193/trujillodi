@@ -20,7 +20,7 @@ class ScreenBCoordinator(
     override val screen: Screen
         get() = ScreenB(
             state = state.value,
-            events = ScreenUiEventsB(emitterData),
+            emitterData = emitterData,
         )
 
     override fun start() {

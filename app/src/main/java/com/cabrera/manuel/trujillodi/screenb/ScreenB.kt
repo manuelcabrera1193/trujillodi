@@ -8,16 +8,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
+import com.cabrera.manuel.trujillodi.base.navigation.NavigationEvents
+import com.cabrera.manuel.trujillodi.ui.toolbar.Toolbar
+import com.cabrera.manuel.trujillodi.ui.toolbar.ToolbarState
 
 class ScreenB(
     override val state: ScreenUiStateB,
-    override val events: ScreenUiEventsB,
+    override val emitterData: EmitterData,
     override val route: String = "screenB",
 ) : Screen {
 
     @Composable
-    override fun Create(modifier: Modifier) {
+    override fun CreateToolbar(modifier: Modifier) {
+        val toolbarState = ToolbarState(
+            visible = true,
+            content = { Text(text = state.title) },
+            showIconStart = true,
+            eventStart = { emitterData.emitData(NavigationEvents.GO_TO_BACK) },
+        )
+        Toolbar(toolbarState)
+    }
+
+    @Composable
+    override fun CreateBody(modifier: Modifier) {
 
         Column(
             modifier = modifier.background(state.color),
@@ -27,7 +42,7 @@ class ScreenB(
             Text(text = state.title)
             Text(text = state.description)
             Button(onClick = {
-                events.goToScreenC()
+                emitterData.emitData(ScreenBData("Completed"))
             }) {
                 Text(text = "Go to screen B")
             }

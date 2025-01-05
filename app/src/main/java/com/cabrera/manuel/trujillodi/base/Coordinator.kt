@@ -1,6 +1,8 @@
 package com.cabrera.manuel.trujillodi.base
 
-interface Coordinator {
+import com.cabrera.manuel.trujillodi.base.lifecycle.LifeCycleView
+
+interface Coordinator : LifeCycleView {
     val parentCoordinator: Coordinator
     val screen: Screen
     fun start()

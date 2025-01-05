@@ -1,7 +1,8 @@
-package com.cabrera.manuel.trujillodi.base
+package com.cabrera.manuel.trujillodi.base.navigation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.cabrera.manuel.trujillodi.base.Coordinator
 
 class Navigation {
 

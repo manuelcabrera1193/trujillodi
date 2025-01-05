@@ -20,9 +20,7 @@ class SplashCoordinator(
     override val screen: Screen
         get() = Splash(
             state = state.value,
-            events = SplashUiEvents(
-                emitterData = emitterData,
-            ),
+            emitterData = emitterData,
         )
 
     override fun start() {

@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.cabrera.manuel.trujillodi.base.Navigation
+import androidx.lifecycle.ViewModelProvider
+import com.cabrera.manuel.trujillodi.base.navigation.Navigation
 import com.cabrera.manuel.trujillodi.base.lifecycle.DisposableEffectWithLifeCycle
 import com.cabrera.manuel.trujillodi.ui.theme.TrujilloDiTheme
+import com.cabrera.manuel.trujillodi.ui.toolbar.Toolbar
+import com.cabrera.manuel.trujillodi.ui.toolbar.ToolbarState
 import com.cabrera.manuel.trujillodi.util.viewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -21,35 +24,45 @@ class MainActivity : ComponentActivity() {
         Navigation()
     }
 
+    private val factory: ViewModelProvider.Factory by lazy {
+        viewModelFactory { MainViewModel(navigation) }
+    }
+
+    private val viewModel: MainViewModel by viewModels { factory }
+
+    private val handleOnBackPressed = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            runCatching {
+                viewModel.navigation.pop()
+                println("coordinators ${viewModel.navigation.coordinators.value.joinToString("-") { it.screen.route }}")
+            }.onFailure {
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val factory by lazy {
-            viewModelFactory { MainViewModel(navigation) }
-        }
-        val viewModel: MainViewModel by viewModels { factory }
-
-        val handleOnBackPressed = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                runCatching {
-                    viewModel.navigation.pop()
-                    println("coordinators ${viewModel.navigation.coordinators.value.joinToString("-") { it.screen.route }}")
-                }.onFailure {
-                    finish()
-                }
-            }
-        }
         onBackPressedDispatcher.addCallback(this, handleOnBackPressed)
         viewModel.start()
         setContent {
             TrujilloDiTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    navigation.coordinators.value.lastOrNull()?.screen?.Create(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) ?: finish()
-                }.also {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        navigation.coordinators.value.lastOrNull()?.screen?.CreateToolbar(Modifier)
+                            ?: Toolbar(ToolbarState())
+                    },
+                    bottomBar = {},
+                    content = { innerPadding ->
+                        navigation.coordinators.value.lastOrNull()?.screen?.CreateBody(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) ?: finish()
+                    }
+                ).also {
                     DisposableEffectWithLifeCycle(viewModel)
                 }
             }

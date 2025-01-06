@@ -3,7 +3,10 @@ package com.cabrera.manuel.trujillodi.screena
 import com.cabrera.manuel.trujillodi.base.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
+import com.cabrera.manuel.trujillodi.base.navigation.NavigationService
 import com.cabrera.manuel.trujillodi.base.ui.CustomState
+import com.cabrera.manuel.trujillodi.ui.navigation.NavigationBarState
+import com.cabrera.manuel.trujillodi.ui.toolbar.ToolbarState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -12,7 +15,22 @@ class ScreenACoordinator(
     private val scope: CoroutineScope,
     private val parent: Coordinator,
     private val emitterData: EmitterData,
-) : Coordinator, CustomState<ScreenUiStateA>(ScreenUiStateA()) {
+    private val navigationService: NavigationService,
+) : Coordinator, CustomState<ScreenUiStateA>(ScreenUiStateA()),
+    NavigationService by navigationService, EmitterData {
+
+    private var time: Int = 0
+    private var isActive: Boolean = false
+
+    private fun counter() {
+        scope.launch {
+            while (isActive) {
+                updateState(state.value.copy(title = "Screen A $time"))
+                delay(2000)
+                time+=2
+            }
+        }
+    }
 
     override val parentCoordinator: Coordinator
         get() = parent
@@ -20,25 +38,38 @@ class ScreenACoordinator(
     override val screen: Screen
         get() = ScreenA(
             state = state.value,
-            emitterData = emitterData,
+            emitterData = this,
         )
 
     override fun start() {
         println("ScreenACoordinator start")
-        exampleEvent()
+        isActive = true
+        counter()
+        updateToolbarState(ToolbarState())
+        updateNavigationBarState(NavigationBarState())
     }
 
-    private fun exampleEvent() = scope.launch {
-        delay(1000)
-        updateState(state.value.copy(title = "Screen A 1"))
-        delay(1000)
-        updateState(state.value.copy(title = "Screen A 2"))
-        delay(1000)
-        updateState(state.value.copy(title = "Screen A 3"))
-        delay(1000)
-        updateState(state.value.copy(title = "Screen A 4"))
-        delay(1000)
-        updateState(state.value.copy(title = "Screen A 5"))
+    override fun emitData(data: Any) {
+        println("ScreenACoordinator emitData $data")
+        emitterData.emitData(data)
+    }
+
+    override fun resume() {
+        println("ScreenACoordinator resume")
+        isActive = true
+        counter()
+        updateToolbarState(ToolbarState())
+        updateNavigationBarState(NavigationBarState())
+    }
+
+    override fun pause() {
+        println("ScreenACoordinator pause")
+        isActive = false
+    }
+
+    override fun destroy() {
+        println("ScreenACoordinator destroy")
+        isActive = false
     }
 }
 

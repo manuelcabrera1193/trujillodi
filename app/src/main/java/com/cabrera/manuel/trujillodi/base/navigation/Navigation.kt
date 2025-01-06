@@ -10,6 +10,8 @@ class Navigation {
     val coordinators: State<List<Coordinator>> = _coordinators
 
     fun add(coordinator: Coordinator) {
+        val lastCoordinator = coordinators.value.lastOrNull()
+        lastCoordinator?.pause()
         println("Navigation add ${coordinator.screen.route}")
         _coordinators.value = coordinators.value.toMutableList().apply {
             add(coordinator)
@@ -33,9 +35,13 @@ class Navigation {
     }
 
     fun pop() {
+        val lastCoordinator = coordinators.value.lastOrNull()
+        lastCoordinator?.destroy()
         _coordinators.value = coordinators.value.toMutableList().apply {
             removeAt(coordinators.value.lastIndex)
         }
+        val newLastCoordinator = coordinators.value.lastOrNull()
+        newLastCoordinator?.resume()
     }
 
     fun popTo(coordinator: Coordinator) {

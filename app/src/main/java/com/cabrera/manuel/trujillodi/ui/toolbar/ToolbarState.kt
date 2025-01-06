@@ -4,13 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class ToolbarState(
     val visible: Boolean = false,
-    val content: @Composable () -> Unit = {},
+    val title: String = "",
     val navigationIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     val contentColor: Color = Color.Transparent,
     val backgroundColor: Color = Color.Transparent,

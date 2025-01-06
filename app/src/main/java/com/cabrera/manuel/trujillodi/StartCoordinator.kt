@@ -4,6 +4,7 @@ import com.cabrera.manuel.trujillodi.base.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
 import com.cabrera.manuel.trujillodi.base.navigation.Navigation
+import com.cabrera.manuel.trujillodi.base.navigation.NavigationService
 import com.cabrera.manuel.trujillodi.screena.ScreenACoordinatorFactory
 import com.cabrera.manuel.trujillodi.screena.ScreenAData
 import com.cabrera.manuel.trujillodi.screenb.ScreenBCoordinatorFactory
@@ -14,6 +15,7 @@ class StartCoordinator(
     private val navigation: Navigation,
     private val scope: CoroutineScope,
     private val emitterData: EmitterData,
+    private val navigationService: NavigationService,
 ) : Coordinator, EmitterData {
 
     private val screenACoordinatorFactory by lazy {
@@ -21,6 +23,7 @@ class StartCoordinator(
             scope = scope,
             parentCoordinator = this,
             emitterData = this,
+            navigationService = navigationService,
         )
     }
 
@@ -29,6 +32,7 @@ class StartCoordinator(
             scope = scope,
             parentCoordinator = this,
             emitterData = this,
+            navigationService = navigationService,
         )
     }
 
@@ -50,14 +54,12 @@ class StartCoordinator(
                 println("ScreenAData")
                 val coordinator = screenBCoordinatorFactory.create()
                 navigation.add(coordinator)
-                coordinator.start()
             }
 
             is ScreenBData -> {
                 println("ScreenBData")
                 val coordinator = screenACoordinatorFactory.create()
                 navigation.add(coordinator)
-                coordinator.start()
             }
 
             else -> {

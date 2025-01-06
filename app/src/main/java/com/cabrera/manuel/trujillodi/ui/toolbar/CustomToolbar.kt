@@ -1,11 +1,9 @@
 package com.cabrera.manuel.trujillodi.ui.toolbar
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -17,10 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import com.cabrera.manuel.trujillodi.ui.theme.dimen12dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen14dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen16dp
@@ -29,10 +29,8 @@ import com.cabrera.manuel.trujillodi.ui.theme.dimen56dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen5dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen8dp
 
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Toolbar(toolBarState: ToolbarState = ToolbarState()) {
+fun CustomToolbar(toolBarState: ToolbarState = ToolbarState()) {
     AnimatedVisibility(toolBarState.visible) {
         Box(
             contentAlignment = Alignment.Center
@@ -84,10 +82,9 @@ fun Toolbar(toolBarState: ToolbarState = ToolbarState()) {
                                     color = Color.Black,
                                     shape = RoundedCornerShape(dimen8dp)
                                 )
-                                .combinedClickable(
-                                    onClick = { toolBarState.eventEnd.invoke() },
-                                    onLongClick = {},
-                                )
+                                .clickable {
+                                    toolBarState.eventEnd.invoke()
+                                }
                                 .background(
                                     color = Color.White,
                                     shape = RoundedCornerShape(dimen8dp)
@@ -110,7 +107,10 @@ fun Toolbar(toolBarState: ToolbarState = ToolbarState()) {
                 }
             }
 
-            toolBarState.content.invoke()
+            Text(
+                text = toolBarState.title,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

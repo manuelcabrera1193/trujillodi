@@ -1,6 +1,9 @@
 package com.cabrera.manuel.trujillodi.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -21,7 +24,11 @@ fun CustomNavigationBar(navigationBarState: NavigationBarState = NavigationBarSt
     val unselectedIcons =
         listOf(Icons.Outlined.Home, Icons.Outlined.FavoriteBorder, Icons.Outlined.Star)
 
-    AnimatedVisibility(navigationBarState.visible) {
+    AnimatedVisibility(
+        visible = navigationBarState.visible,
+        enter = slideInVertically { it } + fadeIn(),
+        exit = ExitTransition.None,
+    ) {
         NavigationBar {
             navigationBarState.items.forEachIndexed { index, item ->
                 NavigationBarItem(

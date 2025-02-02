@@ -1,6 +1,9 @@
 package com.cabrera.manuel.trujillodi.ui.toolbar
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,10 +34,12 @@ import com.cabrera.manuel.trujillodi.ui.theme.dimen8dp
 
 @Composable
 fun CustomToolbar(toolBarState: ToolbarState = ToolbarState()) {
-    AnimatedVisibility(toolBarState.visible) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+    AnimatedVisibility(
+        visible = toolBarState.visible,
+        enter = slideInVertically { -it } + fadeIn(),
+        exit = ExitTransition.None,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
             Row(
                 modifier = Modifier
                     .height(dimen56dp)

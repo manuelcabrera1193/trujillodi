@@ -6,6 +6,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
@@ -42,7 +46,6 @@ class MainActivity : ComponentActivity() {
         override fun handleOnBackPressed() {
             runCatching {
                 navigation.pop()
-                println("coordinators ${viewModel.navigation.coordinators.value.joinToString("-") { it.screen.route }}")
             }.onFailure {
                 finish()
             }
@@ -76,22 +79,37 @@ class MainActivity : ComponentActivity() {
 //                            CustomDrawer { closeMenu(scope, drawerState) }
 //                        }
 //                    ) {
-                        Scaffold(
-                            modifier = Modifier.fillMaxSize(),
-                            topBar = {
-                                CustomToolbar(viewModel.toolbarState.value)
-                            },
-                            bottomBar = {
-                                CustomNavigationBar(viewModel.navigationBarState.value)
-                            },
-                            content = { innerPadding ->
-                                navigation.coordinators.value.lastOrNull()?.screen?.CreateBody(
+
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        topBar = {
+                            CustomToolbar(viewModel.toolbarState.value)
+                        },
+                        bottomBar = {
+                            CustomNavigationBar(viewModel.navigationBarState.value)
+                        },
+                        content = { innerPadding ->
+                            AnimatedContent(
+                                targetState = navigation.coordinators.value,
+                                label = "AnimatedContent",
+                                transitionSpec = {
+                                    if (targetState.size > initialState.size) {
+                                        slideInHorizontally { it }
+                                            .togetherWith(slideOutHorizontally { -it })
+                                    } else {
+                                        slideInHorizontally { -it }
+                                            .togetherWith(slideOutHorizontally { it })
+                                    }
+                                }
+                            ) { targetState ->
+                                targetState.lastOrNull()?.screen?.CreateBody(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(innerPadding)
                                 ) ?: finish()
                             }
-                        )
+                        }
+                    )
 //                    }
                 }.also {
                     DisposableEffectWithLifeCycle(viewModel)

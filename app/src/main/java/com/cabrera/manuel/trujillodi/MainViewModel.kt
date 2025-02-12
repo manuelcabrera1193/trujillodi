@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cabrera.manuel.trujillodi.base.Coordinator
+import com.cabrera.manuel.trujillodi.base.coordinator.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
 import com.cabrera.manuel.trujillodi.base.navigation.Navigation
@@ -17,14 +17,16 @@ import com.cabrera.manuel.trujillodi.ui.alert.AlertDialogState
 import com.cabrera.manuel.trujillodi.ui.bottomsheet.BottomSheetState
 import com.cabrera.manuel.trujillodi.ui.navigation.NavigationBarState
 import com.cabrera.manuel.trujillodi.ui.toolbar.ToolbarState
+import com.willard.cabrera.data.service.base.HttpClientFactory
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     val navigation: Navigation,
+    private val httpClientFactory: HttpClientFactory,
 ) : ViewModel(), Coordinator, EmitterData, NavigationService {
 
     private val splashCoordinatorFactory by lazy {
-        SplashCoordinatorFactory( this, this)
+        SplashCoordinatorFactory(this, this)
     }
 
     private val splashCoordinator by lazy {
@@ -83,7 +85,8 @@ class MainViewModel(
                 navigation = navigation,
                 scope = viewModelScope,
                 emitterData = this@MainViewModel,
-                navigationService = this@MainViewModel
+                navigationService = this@MainViewModel,
+                httpClientFactory = httpClientFactory,
             )
             startCoordinator.start()
         }

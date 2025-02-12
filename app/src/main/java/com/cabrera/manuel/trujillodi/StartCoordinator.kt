@@ -1,14 +1,15 @@
 package com.cabrera.manuel.trujillodi
 
-import com.cabrera.manuel.trujillodi.base.Coordinator
+import com.cabrera.manuel.trujillodi.base.coordinator.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
 import com.cabrera.manuel.trujillodi.base.navigation.Navigation
 import com.cabrera.manuel.trujillodi.base.navigation.NavigationService
 import com.cabrera.manuel.trujillodi.screena.ScreenACoordinatorFactory
-import com.cabrera.manuel.trujillodi.screena.ScreenAData
 import com.cabrera.manuel.trujillodi.screenb.ScreenBCoordinatorFactory
 import com.cabrera.manuel.trujillodi.screenb.ScreenBData
+import com.willard.cabrera.data.service.base.HttpClientFactory
+import com.willard.cabrera.domain.model.RecipeModel
 import kotlinx.coroutines.CoroutineScope
 
 class StartCoordinator(
@@ -16,6 +17,7 @@ class StartCoordinator(
     private val scope: CoroutineScope,
     private val emitterData: EmitterData,
     private val navigationService: NavigationService,
+    private val httpClientFactory: HttpClientFactory,
 ) : Coordinator, EmitterData {
 
     private val screenACoordinatorFactory by lazy {
@@ -24,6 +26,7 @@ class StartCoordinator(
             parentCoordinator = this,
             emitterData = this,
             navigationService = navigationService,
+            httpClientFactory = httpClientFactory,
         )
     }
 
@@ -50,9 +53,8 @@ class StartCoordinator(
 
     override fun emitData(data: Any) {
         when (data) {
-            is ScreenAData -> {
-                println("ScreenAData")
-                val coordinator = screenBCoordinatorFactory.create()
+            is RecipeModel -> {
+                val coordinator = screenBCoordinatorFactory.create(recipe = data)
                 navigation.add(coordinator)
             }
 

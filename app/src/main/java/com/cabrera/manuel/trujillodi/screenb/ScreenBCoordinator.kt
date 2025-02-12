@@ -1,13 +1,15 @@
 package com.cabrera.manuel.trujillodi.screenb
 
-import com.cabrera.manuel.trujillodi.base.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
+import com.cabrera.manuel.trujillodi.base.coordinator.Coordinator
+import com.cabrera.manuel.trujillodi.base.coordinator.active.ActiveState
 import com.cabrera.manuel.trujillodi.base.navigation.NavigationEvents
 import com.cabrera.manuel.trujillodi.base.navigation.NavigationService
 import com.cabrera.manuel.trujillodi.base.ui.CustomState
 import com.cabrera.manuel.trujillodi.ui.navigation.NavigationBarState
 import com.cabrera.manuel.trujillodi.ui.toolbar.ToolbarState
+import com.willard.cabrera.domain.model.RecipeModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,18 +19,20 @@ class ScreenBCoordinator(
     private val parent: Coordinator,
     private val emitterData: EmitterData,
     private val navigationService: NavigationService,
-) : Coordinator, CustomState<ScreenUiStateB>(ScreenUiStateB()),
+    recipe: RecipeModel,
+) : Coordinator,
+    CustomState<ScreenUiStateB>(ScreenUiStateB(recipe = recipe)),
     NavigationService by navigationService {
 
     private var time: Int = 1
-    private var isActive: Boolean = false
 
     private fun counter() {
         println("ScreenBCoordinator fun counter")
         scope.launch {
-            while (isActive) {
+            while (state.value.isActive) {
                 println("ScreenBCoordinator counter")
                 updateState(state.value.copy(title = "Screen B $time"))
+                updateToolbarState(toolbar.copy(title = "Screen B $time"))
                 delay(1000)
                 time++
             }
@@ -46,7 +50,6 @@ class ScreenBCoordinator(
 
     override fun start() {
         println("ScreenBCoordinator start")
-        isActive = true
         counter()
         updateNavigationBarState(NavigationBarState(visible = true))
         val toolbarState = ToolbarState(
@@ -62,8 +65,9 @@ class ScreenBCoordinator(
     }
 
     override fun resume() {
+        updateState(state.value.copy(active = ActiveState.ENABLED))
         println("ScreenBCoordinator resume")
-        isActive = true
+        println("ScreenBCoordinator state ${state.value.isActive}")
         counter()
         updateNavigationBarState(NavigationBarState(visible = true))
         val toolbarState = ToolbarState(
@@ -79,13 +83,15 @@ class ScreenBCoordinator(
     }
 
     override fun pause() {
+        updateState(state.value.copy(active = ActiveState.DISABLED))
         println("ScreenBCoordinator pause")
-        isActive = false
+        println("ScreenBCoordinator state ${state.value.isActive}")
     }
 
     override fun destroy() {
+        updateState(state.value.copy(active = ActiveState.DISABLED))
         println("ScreenBCoordinator destroy")
-        isActive = false
+        println("ScreenBCoordinator state ${state.value.isActive}")
     }
 }
 

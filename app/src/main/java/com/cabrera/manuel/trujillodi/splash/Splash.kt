@@ -20,7 +20,6 @@ class Splash(
     @Composable
     override fun CreateBody(modifier: Modifier) {
         LaunchedEffect(Unit) {
-            delay(3000)
             emitterData.emitData(SplashData.GO_TO_HOME)
         }
         Column(

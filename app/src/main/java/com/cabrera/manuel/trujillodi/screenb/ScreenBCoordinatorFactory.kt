@@ -1,8 +1,9 @@
 package com.cabrera.manuel.trujillodi.screenb
 
-import com.cabrera.manuel.trujillodi.base.Coordinator
+import com.cabrera.manuel.trujillodi.base.coordinator.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.navigation.NavigationService
+import com.willard.cabrera.domain.model.RecipeModel
 import kotlinx.coroutines.CoroutineScope
 
 class ScreenBCoordinatorFactory(
@@ -12,10 +13,11 @@ class ScreenBCoordinatorFactory(
     private val navigationService: NavigationService,
 ) {
 
-    fun create() = ScreenBCoordinator(
+    fun create(recipe: RecipeModel) = ScreenBCoordinator(
         scope = scope,
         parent = parentCoordinator,
         emitterData = emitterData,
         navigationService = navigationService,
+        recipe = recipe,
     )
 }

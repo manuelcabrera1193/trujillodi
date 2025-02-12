@@ -1,9 +1,7 @@
-package com.cabrera.manuel.trujillodi.base.lifecycle
+package com.cabrera.manuel.trujillodi.base.coordinator.lifecycle
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.Lifecycle.Event.ON_ANY
 import androidx.lifecycle.Lifecycle.Event.ON_CREATE
 import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
@@ -16,48 +14,39 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
-fun DisposableEffectWithLifeCycle(lifeCycleView: LifeCycleView) {
+fun DisposableEffectWithLifeCycle(lifecycleCoordinator: LifeCycleCoordinator) {
 
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
-
-    val currentOnCreate by rememberUpdatedState(lifeCycleView::onCreate)
-    val currentOnStart by rememberUpdatedState(lifeCycleView::onStart)
-    val currentOnResume by rememberUpdatedState(lifeCycleView::onResume)
-    val currentOnPause by rememberUpdatedState(lifeCycleView::onPause)
-    val currentOnStop by rememberUpdatedState(lifeCycleView::onStop)
-    val currentOnDestroy by rememberUpdatedState(lifeCycleView::onDestroy)
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 ON_CREATE -> {
                     println("ON_CREATE")
-                    currentOnCreate()
                 }
 
                 ON_START -> {
                     println("ON_START")
-                    currentOnStart()
                 }
 
                 ON_RESUME -> {
                     println("ON_RESUME")
-                    currentOnResume()
+                    lifecycleCoordinator.resume()
                 }
 
                 ON_PAUSE -> {
                     println("ON_PAUSE")
-                    currentOnPause()
+                    lifecycleCoordinator.pause()
                 }
 
                 ON_STOP -> {
                     println("ON_STOP")
-                    currentOnStop()
+                    lifecycleCoordinator.stop()
                 }
 
                 ON_DESTROY -> {
                     println("ON_DESTROY")
-                    currentOnDestroy()
+                    lifecycleCoordinator.destroy()
                 }
 
                 ON_ANY -> Unit

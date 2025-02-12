@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TrujilloDi"
 include(":app")
- 
+include(":data")
+include(":domain")

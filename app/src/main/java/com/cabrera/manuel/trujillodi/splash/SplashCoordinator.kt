@@ -1,6 +1,6 @@
 package com.cabrera.manuel.trujillodi.splash
 
-import com.cabrera.manuel.trujillodi.base.Coordinator
+import com.cabrera.manuel.trujillodi.base.coordinator.Coordinator
 import com.cabrera.manuel.trujillodi.base.EmitterData
 import com.cabrera.manuel.trujillodi.base.Screen
 import com.cabrera.manuel.trujillodi.base.ui.CustomState

@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import com.cabrera.manuel.trujillodi.ui.theme.dimen56dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen5dp
 import com.cabrera.manuel.trujillodi.ui.theme.dimen8dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomToolbar(toolBarState: ToolbarState = ToolbarState()) {
     AnimatedVisibility(
@@ -39,83 +42,87 @@ fun CustomToolbar(toolBarState: ToolbarState = ToolbarState()) {
         enter = slideInVertically { -it } + fadeIn(),
         exit = ExitTransition.None,
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Row(
-                modifier = Modifier
-                    .height(dimen56dp)
-                    .fillMaxWidth()
-                    .background(toolBarState.backgroundColor)
-                    .padding(horizontal = dimen14dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart
-                ) {
-                    if (toolBarState.showIconStart) {
+        TopAppBar(
+            title = {
+                Box(contentAlignment = Alignment.Center) {
+                    Row(
+                        modifier = Modifier
+                            .height(dimen56dp)
+                            .fillMaxWidth()
+                            .background(toolBarState.backgroundColor)
+                            .padding(horizontal = dimen14dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Box(
+                            modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart
+                        ) {
+                            if (toolBarState.showIconStart) {
+                                Box(
+                                    modifier = Modifier
+                                        .absoluteOffset(x = -(dimen16dp))
+                                        .fillMaxHeight()
+                                        .clickable {
+                                            toolBarState.eventStart.invoke()
+                                        }
+                                        .padding(horizontal = dimen16dp)
+                                ) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .fillMaxHeight(),
+                                        imageVector = toolBarState.navigationIcon,
+                                        tint = Color.Black,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
+
                         Box(
                             modifier = Modifier
-                                .absoluteOffset(x = -(dimen16dp))
-                                .fillMaxHeight()
-                                .clickable {
-                                    toolBarState.eventStart.invoke()
-                                }
-                                .padding(horizontal = dimen16dp)
+                                .weight(1f),
+                            contentAlignment = Alignment.CenterEnd
                         ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxHeight(),
-                                imageVector = toolBarState.navigationIcon,
-                                tint = Color.Black,
-                                contentDescription = null
-                            )
+                            if (toolBarState.showIconEnd) {
+                                Row(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .border(
+                                            width = dimen1dp,
+                                            color = Color.Black,
+                                            shape = RoundedCornerShape(dimen8dp)
+                                        )
+                                        .clickable {
+                                            toolBarState.eventEnd.invoke()
+                                        }
+                                        .background(
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(dimen8dp)
+                                        )
+                                        .padding(vertical = dimen8dp, horizontal = dimen12dp),
+                                    horizontalArrangement = Arrangement.spacedBy(dimen5dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = if (toolBarState.showMenu) {
+                                            toolBarState.actionsIcon
+                                        } else {
+                                            toolBarState.iconEnd
+                                        },
+                                        contentDescription = null,
+                                        tint = Color.Black
+                                    )
+                                }
+                            }
                         }
                     }
-                }
 
-                Box(
-                    modifier = Modifier
-                        .weight(1f),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    if (toolBarState.showIconEnd) {
-                        Row(
-                            modifier = Modifier
-                                .wrapContentWidth()
-                                .border(
-                                    width = dimen1dp,
-                                    color = Color.Black,
-                                    shape = RoundedCornerShape(dimen8dp)
-                                )
-                                .clickable {
-                                    toolBarState.eventEnd.invoke()
-                                }
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(dimen8dp)
-                                )
-                                .padding(vertical = dimen8dp, horizontal = dimen12dp),
-                            horizontalArrangement = Arrangement.spacedBy(dimen5dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = if (toolBarState.showMenu) {
-                                    toolBarState.actionsIcon
-                                } else {
-                                    toolBarState.iconEnd
-                                },
-                                contentDescription = null,
-                                tint = Color.Black
-                            )
-                        }
-                    }
+                    Text(
+                        text = toolBarState.title,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
-
-            Text(
-                text = toolBarState.title,
-                textAlign = TextAlign.Center
-            )
-        }
+        )
     }
 }
